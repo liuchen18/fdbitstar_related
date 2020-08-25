@@ -16,6 +16,10 @@
         AABB2d(const Point2d& center, const double length, const double width);
         AABB2d(const Point2d& conner1,const Point2d& conner3);
 
+        /**
+         * @brief get center of the box
+         * @return
+         */
         Point2d get_center() const{return center_;}
         double get_length() const {return length_;}
         double get_width() const {return width_;}

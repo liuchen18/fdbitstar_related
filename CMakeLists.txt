@@ -10,20 +10,20 @@ include_directories(
         include/
 )
 
-add_library(planner
-        include/motion_plan.h
+set(planner
         include/planner_core.h
-
-        src/motion_plan.cpp
         src/planner_core.cpp
 
+        include/RRT.h
+        src/RRT.cpp
         )
 
-add_library(common
+set(common
         include/Point2d.h
         include/Linesegment2d.h
         include/AABB2d.h
         include/OBB2d.h
+        include/Node2d.h
 
         src/Point2d.cpp
         src/Linesegment.cpp
@@ -31,8 +31,12 @@ add_library(common
         src/OBB2d.cpp
         )
 
-add_executable(main src/motion_plan.cpp)
-target_link_libraries(main ${OpenCV_LIBS} ${planner})
+SET(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 add_executable(map_generator src/map_generator.cpp)
 target_link_libraries(map_generator ${OpenCV_LIBS})
+
+add_executable(main src/main.cpp ${common} ${planner})
+target_link_libraries(main ${OpenCV_LIBS})

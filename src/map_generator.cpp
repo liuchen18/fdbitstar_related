@@ -8,10 +8,8 @@
 
 //using namespace std;
 void generate_random_map(int obs_num,int obs_size) {
-    int height = 500, width = 800, step = 10;
-    double lane_width = 40;
+    int height = 500, width = 800;
     cv::Mat map_img = cv::Mat::zeros(cv::Size(width, height), CV_8UC1);
-    double x_unit = 10;
     for(int i=0;i<height;i++){
         for(int j=0;j<width;j++){
             map_img.at<uchar>(i,j)=255;
@@ -26,6 +24,10 @@ void generate_random_map(int obs_num,int obs_size) {
     for(int i=0;i<obs_num;i++){
         obs_pos[i][0]=rand()%500;
         obs_pos[i][1]=rand()%800;
+        if(obs_pos[i][0] < 20 || obs_pos[i][1] < 20){
+            i-=1;
+            continue;
+        }
         for(int m=std::max(0,obs_pos[i][0]-obs_size);m<std::min(500,obs_pos[i][0]+obs_size);m++){
             for(int n=std::max(0,obs_pos[i][1]-obs_size);n<std::min(800,obs_pos[i][1]+obs_size);n++){
                 map_img.at<uchar>(m,n)=0;
@@ -40,6 +42,6 @@ void generate_random_map(int obs_num,int obs_size) {
 }
 
 int main(){
-    generate_random_map(50,20);
+    generate_random_map(70,20);
     return 0;
 }
