@@ -4,10 +4,12 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
+#include "map_generator.h"
+#include <fstream>
 #include <algorithm>
 
 //using namespace std;
-void generate_random_map(int obs_num,int obs_size) {
+std::vector<Point2d> generate_random_map(int obs_num,int obs_size) {
     int height = 500, width = 800;
     cv::Mat map_img = cv::Mat::zeros(cv::Size(width, height), CV_8UC1);
     for(int i=0;i<height;i++){
@@ -16,21 +18,18 @@ void generate_random_map(int obs_num,int obs_size) {
         }
     }
 
-    imshow("binary map", map_img);
-    cv::waitKey();
-
-    std::vector<std::vector<int>> obs_pos(obs_num,std::vector<int>(2));
+    std::vector<Point2d> obs_pos(obs_num,Point2d());
     srand(time(0));
     for(int i=0;i<obs_num;i++){
-        obs_pos[i][0]=rand()%500;
-        obs_pos[i][1]=rand()%800;
-        if(obs_pos[i][0] < 20 || obs_pos[i][1] < 20){
+        obs_pos[i].set_x(rand()%800);
+        obs_pos[i].set_y(rand()%500);
+        if(obs_pos[i].get_x() < 20 || obs_pos[i].get_y() < 20){
             i-=1;
             continue;
         }
-        for(int m=std::max(0,obs_pos[i][0]-obs_size);m<std::min(500,obs_pos[i][0]+obs_size);m++){
-            for(int n=std::max(0,obs_pos[i][1]-obs_size);n<std::min(800,obs_pos[i][1]+obs_size);n++){
-                map_img.at<uchar>(m,n)=0;
+        for(int m=std::max(0,(int)obs_pos[i].get_x()-obs_size);m<std::min(800,(int)obs_pos[i].get_x()+obs_size);m++){
+            for(int n=std::max(0,(int)obs_pos[i].get_y()-obs_size);n<std::min(500,(int)obs_pos[i].get_y()+obs_size);n++){
+                map_img.at<uchar>(n,m)=0;
             }
         }
     }
@@ -38,10 +37,17 @@ void generate_random_map(int obs_num,int obs_size) {
     imshow("binary map", map_img);
 
     cv::waitKey();
-    imwrite("random_map.png", map_img);
+    imwrite("../graph/random_map.png", map_img);
+
+    return obs_pos;
 }
 
-int main(){
-    generate_random_map(70,20);
-    return 0;
+int main() {
+    int obs_num=70;
+    std::vector<Point2d> obs_pos=generate_random_map(obs_num,20);
+    std::ofstream my_out("../graph/random_map.txt");
+    my_out<<obs_num<<std::endl;
+    for(auto obs:obs_pos){
+        my_out<<obs.get_x()<<" "<<obs.get_y()<<" "<<40<<" "<<40<<std::endl;
+    }
 }

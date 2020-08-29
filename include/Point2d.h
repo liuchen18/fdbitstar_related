@@ -1,7 +1,9 @@
 #ifndef _Point2d
 #define _Point2d
 
-    constexpr double kMathEpsilon = 1e-10;
+#include <iostream>
+
+constexpr double kMathEpsilon = 1e-10;
 
     class Point2d{
     public:
@@ -16,6 +18,12 @@
          * @param y
          */
         Point2d(const double x,const double y):x_(x),y_(y){};
+
+        /**
+         * @brief constructor
+         * @param p
+         */
+        Point2d(const Point2d& p):x_(p.get_x()),y_(p.get_y()){}
 
         /**
          * @brief get x

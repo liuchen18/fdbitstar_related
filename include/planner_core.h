@@ -44,9 +44,8 @@ public:
       */
      //virtual bool clear_all()=0;
 
-     virtual void set_map(cv::Mat *map)=0;
+     virtual void set_map(cv::Mat *map,std::vector<std::vector<int>> obs_list)=0;
 
-     virtual void test()=0;
 };
 
 #endif

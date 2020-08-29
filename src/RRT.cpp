@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <cmath>
 #include <random>
-#include <unordered_set>
 
 RRT::~RRT() {
     clear_all();
@@ -12,8 +11,7 @@ RRT::~RRT() {
 bool RRT::make_plan(Point2d start, Point2d end) {
     _start=start;
     _goal=end;
-    get_obstacle_list();
-    //std::cout<<"obstable num: "<<_obs_list.size()<<std::endl;
+    std::cout<<"obstable num: "<<_obs_list.size()<<std::endl;
     if(!check_validity()){
         return false;
     }
@@ -33,7 +31,7 @@ bool RRT::make_plan(Point2d start, Point2d end) {
             }
         }
         else{
-            std::cout<<"collision!"<<std::endl;
+            //std::cout<<"collision!"<<std::endl;
             delete new_node;
             new_node= nullptr;
         }
@@ -122,7 +120,13 @@ bool RRT::is_collision_free(Node2d *first_node, Node2d *second_node) {
 
 }
 
-void RRT::get_obstacle_list() {
+void RRT::get_obstacle_list(std::vector<std::vector<int>> obs_list) {
+    for(auto obs:obs_list){
+        OBB2d *obs_ptr=new OBB2d(obs[0],obs[1],0.0,obs[2],obs[3]);
+        _obs_list.push_back(obs_ptr);
+    }
+
+    /*
     clear_obs_list();
     for(int i=0;i<_map->rows;i++){
         for(int j=0;j<_map->cols;j++){
@@ -152,6 +156,10 @@ void RRT::get_obstacle_list() {
             }
         }
     }
+    std::cout<<"obs num: "<<_obs_list.size()<<std::endl;
+    for(auto obs:_obs_list){
+        std::cout<<"obs x: "<<obs->get_center().get_x()<< " obs y: "<<obs->get_center().get_y()<<std::endl;
+    }*/
 
 }
 
@@ -165,15 +173,21 @@ void RRT::clear_obs_list() {
 
 bool RRT::check_validity() {
     for(auto obs : _obs_list){
-        if(obs->is_Point_in(_start) || obs->is_Point_in(_goal)){
-            std::cout<<"the start or the goal is in the obstacle"<<std::endl;
+        if(obs->is_Point_in(_start)){
+            std::cerr<<"the start is in the obstacle"<<std::endl;
+            return false;
+        }
+        if(obs->is_Point_in(_goal)) {
+            std::cerr<<"the goal is in the obstacle"<<std::endl;
             return false;
         }
         if(_start.get_y()>_max_y || _start.get_y()<_min_y || _start.get_x()>_max_x || _start.get_x()<_min_x){
-            std::cout<<"the start is out of range"<<std::endl;
+            std::cerr<<"the start is out of range"<<std::endl;
+            return false;
         }
         if(_goal.get_x()>_max_x || _goal.get_x() < _min_x || _goal.get_y() < _min_y || _goal.get_y() > _max_y){
-            std::cout<<"the goal is out of range"<<std::endl;
+            std::cerr<<"the goal is out of range"<<std::endl;
+            return false;
         }
     }
     return true;
@@ -222,11 +236,4 @@ void RRT::show_graph() {
     cv::waitKey();
 }
 
-void RRT::test() {
-    get_obstacle_list();
-    Node2d start(0,0),goal(500,100,&start);
-    _tree_nodes.push_back(&start);
-    _tree_nodes.push_back(&goal);
-    show_graph();
-}
 

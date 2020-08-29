@@ -99,7 +99,7 @@
         double min_x=std::min(get_min_x(),given_Point.get_x());
         double max_y=std::max(get_max_y(),given_Point.get_y());
         double min_y=std::min(get_min_y(),given_Point.get_y());
-        center_.set_xy((max_x+min_x)/2,(max_y,min_y)/2);
+        center_.set_xy((max_x+min_x)/2,(max_y+min_y)/2);
         length_=max_x-min_x;
         width_=max_y-min_y;
         conner1_.set_xy(min_x,min_y);
@@ -113,7 +113,7 @@
         double min_x=std::min(get_min_x(),box.get_min_x());
         double max_y=std::max(get_max_y(),box.get_max_y());
         double min_y=std::min(get_min_y(),box.get_min_y());
-        center_.set_xy((max_x+min_x)/2,(max_y,min_y)/2);
+        center_.set_xy((max_x+min_x)/2,(max_y+min_y)/2);
         length_=max_x-min_x;
         width_=max_y-min_y;
         conner1_.set_xy(min_x,min_y);

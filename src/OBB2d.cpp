@@ -4,6 +4,8 @@
 #include <iostream>
     
     void OBB2d::compute_conners(){
+        conners_.clear();
+
         double dx1=length_*std::cos(angle_)/2;
         double dx2=width_*std::sin(angle_)/2;
         double dy1=length_/2*std::sin(angle_);
@@ -24,6 +26,7 @@
 
     OBB2d::OBB2d(const Point2d& center,const double direction_angle,const double length,const double width)
             :center_(center),angle_(direction_angle),length_(length),width_(width){
+
         max_x_=std::numeric_limits<double>::lowest(); //negtive min doube
         min_x_=std::numeric_limits<double>::max();
         max_y_=std::numeric_limits<double>::lowest();

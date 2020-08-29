@@ -40,3 +40,5 @@ target_link_libraries(map_generator ${OpenCV_LIBS})
 
 add_executable(main src/main.cpp ${common} ${planner})
 target_link_libraries(main ${OpenCV_LIBS})
+
+add_executable(OBB_test src/OBB_test.cpp ${common})

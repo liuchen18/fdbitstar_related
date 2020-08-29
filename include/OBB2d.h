@@ -25,6 +25,17 @@
         OBB2d(const Point2d& center,const Point2d& direstion_unit,const double length,const double width);
 
         /**
+         * @brief construction function
+         * @param x
+         * @param y
+         * @param direstion_unit
+         * @param length
+         * @param width
+         */
+        OBB2d(const double x,const double y,const Point2d& direstion_unit,const double length,const double width):
+                OBB2d(Point2d(x,y),direstion_unit,length,width){}
+
+        /**
         @brief construction function
         @param center center Point of the OBB
         @param direction_angle the angle to the positive x semi axis
@@ -32,6 +43,17 @@
         @param width length perpendicular to the OBB axis
         */
         OBB2d(const Point2d& center,const double direction_angle,const double length,const double width);
+
+        /**
+         * @brief
+         * @param x
+         * @param y
+         * @param direction_angle
+         * @param length
+         * @param width
+         */
+        OBB2d(const double x,const double y,const double direction_angle,const double length,const double width):
+            OBB2d(Point2d(x,y),direction_angle,length,width){}
 
         /**
         @brief construction function
@@ -51,44 +73,83 @@
         */
         void compute_conners();
 
-        /*get center Point*/
+        /**
+         * @brief get center Point
+         * return center point
+        */
         Point2d get_center()const{return center_;}
 
-        /*get angle*/
+        /**
+         * @brief get angle to the positive x axis
+         * @return
+         */
         double get_angle() const {return angle_;}
 
-        /*get cos angle*/
+        /**
+         * @brief get the cos of the direction anglr
+         * @return
+         */
         double get_cos() const{return cos_angle_;}
 
-        /*get sin angle*/
+        /**
+         * @brief get the sin of the direction angle
+         * @return
+         */
         double get_sin() const{return sin_angle_;}
 
-        /*get length*/
+        /**
+         * @brief get the length of the OBB
+         * @return
+         */
         double get_length() const{return length_;}
 
-        /*get width*/
+        /**
+         * @brief get the width of the OBB
+         * @return
+         */
         double get_width() const {return width_;}
 
-        /*get direction unit*/
+        /**
+         * @brief get the direction unit
+         * @return
+         */
         Point2d get_direction_unit() const{return direction_unit_;}
 
-        /*get min x*/
+        /**
+         * @brief get the min x of the OBB
+         * @return
+         */
         double get_min_x() const{return min_x_;}
 
-        /*get max x*/
+        /**
+         * @brief get the max x of the OBB
+         * @return
+         */
         double get_max_x() const{return max_x_;}
 
-        /*get min y*/
+        /**
+         * @brief get the min y of the OBB
+         * @return
+         */
         double get_min_y() const{return min_y_;}
 
-        /*get min x*/
+        /**
+         * @brief get the max y of the OBB
+         * @return
+         */
         double get_max_y() const{return max_y_;}
 
-        /*set length*/
-        void set_length(const double length){length_=length;}
+        /**
+         * @brief set the length of the obb
+         * @param length
+         */
+        void set_length(const double length){length_=length;compute_conners();}
 
-        /*set width*/
-        void set_width(const double width){width_=width;}
+        /**
+         * @brief set the width of the OBB
+         * @param width
+         */
+        void set_width(const double width){width_=width;compute_conners();}
 
         /**
         @brief get the 4 conner
