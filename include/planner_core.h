@@ -43,8 +43,17 @@ public:
       * @return true if done
       */
      //virtual bool clear_all()=0;
-
+    /**
+     * @brief set map
+     * @param map
+     * @param obs_list
+     */
      virtual void set_map(cv::Mat *map,std::vector<std::vector<int>> obs_list)=0;
+
+    /**
+    * @brief show the env and the path
+    */
+     virtual void show_graph()=0;
 
 };
 

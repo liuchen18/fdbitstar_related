@@ -29,13 +29,13 @@ public:
      */
     RRT(cv::Mat *map,
         std::vector<std::vector<int>> obs_list,
-        int step_size=50,
-        int max_iter=2000,
+        int step_size=5,
+        int max_iter=20000,
         int max_x=800,
         int min_x=0,
         int max_y=500,
         int min_y=0,
-        int goal_sample_rate=5):
+        int goal_sample_rate=0):
             _map(map),
             _path(std::vector<Point2d>()),
             _obs_list(std::vector<OBB2d*>()),
@@ -85,7 +85,7 @@ public:
      * @brief clear the tree and the path
      * @return true if done
      */
-    void clear_all();
+    void clear_tree();
 
     /**
      * @brief generate random node
@@ -144,7 +144,7 @@ public:
     /**
      * @brief show the env and the path
      */
-    void show_graph();
+    virtual void show_graph();
 
 
 

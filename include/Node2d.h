@@ -11,14 +11,14 @@ public:
      * @param y
      * @param parent
      */
-    Node2d(double x,double y, Node2d *parent= nullptr):_point(x,y),_parent(parent){}
+    Node2d(double x,double y, Node2d *parent= nullptr):_point(x,y),_parent(parent),_cost(0){}
 
     /**
      * @brief constructor
      * @param point
      * @param parent
      */
-    Node2d(Point2d point, Node2d *parent= nullptr):_point(point),_parent(parent){}
+    Node2d(Point2d point, Node2d *parent= nullptr):_point(point),_parent(parent),_cost(0){}
 
     /**
      * @brief get x
@@ -62,9 +62,22 @@ public:
      */
     void set_parent(Node2d *parent){_parent = parent;}
 
+    /**
+     * @brief get the current cost of the node
+     * @return
+     */
+    double get_cost() const{return _cost;}
+
+    /**
+     * @brief set the cost to the given cost
+     * @param cost
+     */
+    void set_cost(double cost){_cost=cost;}
+
 private:
     Point2d _point;
     Node2d *_parent;
+    double _cost;
 };
 
 #endif

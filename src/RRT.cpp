@@ -4,19 +4,19 @@
 #include <random>
 
 RRT::~RRT() {
-    clear_all();
+    clear_tree();
     clear_obs_list();
 }
 
 bool RRT::make_plan(Point2d start, Point2d end) {
     _start=start;
     _goal=end;
-    std::cout<<"obstable num: "<<_obs_list.size()<<std::endl;
+    //std::cout<<"obstable num: "<<_obs_list.size()<<std::endl;
     if(!check_validity()){
         return false;
     }
 
-    std::cout<<"starting planning"<<std::endl;
+    std::cout<<"start planning"<<std::endl;
     Node2d* start_ptr=new Node2d(start);
     _tree_nodes.push_back(start_ptr);
     int cur_iter=0;
@@ -57,7 +57,7 @@ bool RRT::make_plan(Point2d start, Point2d end) {
 
 }
 
-void RRT::clear_all() {
+void RRT::clear_tree() {
     for(auto tree_node : _tree_nodes){
         delete tree_node;
         tree_node= nullptr;

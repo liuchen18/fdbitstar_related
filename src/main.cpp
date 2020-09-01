@@ -1,4 +1,5 @@
 #include "RRT.h"
+#include "RRTstar.h"
 #include <iostream>
 #include <fstream>
 
@@ -28,7 +29,8 @@ int main(){
     }
 
 
-    Planner *planner = new RRT(&map_img,obs_list);
+    //Planner *planner = new RRT(&map_img,obs_list);
+    Planner *planner = new RRT_STAR(&map_img,obs_list);
     std::cout<<"planner initialized!"<<std::endl;
     planner->make_plan(0,0,799,499);
 
