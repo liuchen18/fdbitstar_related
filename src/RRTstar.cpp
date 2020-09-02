@@ -15,6 +15,7 @@ void RRT_STAR::clear_tree() {
         tree_node= nullptr;
     }
     _tree_nodes.clear();
+    kdtree_nodes.pts.clear();
     _path.clear();
 
 }
@@ -41,6 +42,7 @@ Node2d* RRT_STAR::expand_node(Node2d *nearest_node, Point2d *random_point) {
 }
 
 Node2d* RRT_STAR::get_nearest(Point2d point) {
+    /**
     double min_dis=std::numeric_limits<double>::max();
     Node2d *nearest_node= nullptr;
     for(auto tree_node:_tree_nodes){
@@ -51,6 +53,16 @@ Node2d* RRT_STAR::get_nearest(Point2d point) {
         }
     }
     return nearest_node;
+     */
+    double query_pt[2]={point.get_x(),point.get_y()};
+    const size_t num_results = 1;
+    size_t ret_index;
+    double out_dist_sqr;
+    nanoflann::KNNResultSet<double> resultSet(num_results);
+    resultSet.init(&ret_index, &out_dist_sqr );
+    kdtree.findNeighbors(resultSet, query_pt, nanoflann::SearchParams(10));
+
+    return kdtree_nodes.pts[ret_index];
 
 }
 
@@ -133,7 +145,7 @@ void RRT_STAR::show_tree() {
 
     }
     cv::imshow("search tree",new_map);
-    cv::waitKey();
+    cv::waitKey(0.05);
 }
 
 void RRT_STAR::show_graph() {
@@ -186,11 +198,22 @@ double RRT_STAR::get_search_radius() {
 }
 std::vector<Node2d*> RRT_STAR::get_near_neighbor(Node2d *new_node) {
     std::vector<Node2d*> neighbors;
+    double query_pt[2]={new_node->get_position().get_x(),new_node->get_position().get_y()};
+    /*
     for(auto node:_tree_nodes){
         double dis=get_distance(node,new_node);
         if(dis<_search_radius){
             neighbors.push_back(node);
         }
+    }
+     */
+    const double radius = _search_radius*_search_radius;
+    std::vector<std::pair<size_t, double> > indices_dists;
+    nanoflann::RadiusResultSet<double, size_t> resultSet(radius, indices_dists);
+
+    kdtree.findNeighbors(resultSet, query_pt, nanoflann::SearchParams());
+    for(auto node:resultSet.m_indices_dists){
+        neighbors.push_back(kdtree_nodes.pts[node.first]);
     }
     return neighbors;
 }
@@ -233,7 +256,8 @@ bool RRT_STAR::make_plan(Point2d start, Point2d end) {
 
     std::cout<<"start planning"<<std::endl;
     Node2d* start_ptr=new Node2d(start);
-    _tree_nodes.push_back(start_ptr);
+    //_tree_nodes.push_back(start_ptr);
+    add_node(start_ptr);
     int cur_iter=0;
     while(cur_iter < _max_iter){
         Point2d random_point=generate_random_point();
@@ -245,7 +269,8 @@ bool RRT_STAR::make_plan(Point2d start, Point2d end) {
         choose_parent(new_node,neighbors);
         if(new_node->get_parent()){
             rewire(new_node,neighbors);
-            _tree_nodes.push_back(new_node);
+            //_tree_nodes.push_back(new_node);
+            add_node(new_node);
             if(new_node->get_position() == _goal){
                 _goal_ptr=new_node;
                 _got_path=true;
@@ -260,6 +285,7 @@ bool RRT_STAR::make_plan(Point2d start, Point2d end) {
             std::cout<<"current radius: "<<_search_radius<<std::endl;
             std::cout<<"current node number: "<<_tree_nodes.size()<<std::endl;
             std::cout<<"current iter is "<< cur_iter<<std::endl;
+            //show_tree();
         }
         cur_iter+=1;
     }
@@ -279,4 +305,11 @@ bool RRT_STAR::make_plan(Point2d start, Point2d end) {
     }
 
 
+}
+
+void RRT_STAR::add_node(Node2d *node) {
+    _tree_nodes.push_back(node);
+    size_t cur_num =kdtree_nodes.kdtree_get_point_count();
+    kdtree_nodes.pts.push_back(node);
+    kdtree.addPoints(cur_num,kdtree_nodes.kdtree_get_point_count()-1);
 }

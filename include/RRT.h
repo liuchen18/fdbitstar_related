@@ -4,6 +4,7 @@
 #include "planner_core.h"
 #include "Node2d.h"
 #include "OBB2d.h"
+#include "kdtree_help.h"
 
 class RRT: public Planner{
 private:
@@ -20,6 +21,9 @@ private:
     int _goal_sample_rate;
     bool _got_path;
     bool _show_animation;
+    KDTREE_POINTS<double> kdtree_nodes;
+    my_kd_tree_t   kdtree;
+
 
 public:
     /**
@@ -41,7 +45,8 @@ public:
             _obs_list(std::vector<OBB2d*>()),
             _tree_nodes(std::vector<Node2d*>()),
             _start(Point2d(0,0)),
-            _goal(Point2d(0,0)){
+            _goal(Point2d(0,0)),
+            kdtree(2 /*dim*/, kdtree_nodes, nanoflann::KDTreeSingleIndexAdaptorParams(10 /* max leaf */) ){
         get_obstacle_list(obs_list);
         _step_size=step_size;
         _max_iter=max_iter;
@@ -52,6 +57,8 @@ public:
         _goal_sample_rate=goal_sample_rate;
         _got_path=false;
         _show_animation=true;
+
+
     }
 
     /**
@@ -145,6 +152,12 @@ public:
      * @brief show the env and the path
      */
     virtual void show_graph();
+
+    /**
+     * @brief add node to the rrt tree and kd tree
+     * @param node
+     */
+    void add_node(Node2d* node);
 
 
 

@@ -8,6 +8,13 @@ RRT::~RRT() {
     clear_obs_list();
 }
 
+void RRT::add_node(Node2d *node) {
+    _tree_nodes.push_back(node);
+    size_t cur_num =kdtree_nodes.kdtree_get_point_count();
+    kdtree_nodes.pts.push_back(node);
+    kdtree.addPoints(cur_num,kdtree_nodes.kdtree_get_point_count()-1);
+}
+
 bool RRT::make_plan(Point2d start, Point2d end) {
     _start=start;
     _goal=end;
@@ -18,14 +25,15 @@ bool RRT::make_plan(Point2d start, Point2d end) {
 
     std::cout<<"start planning"<<std::endl;
     Node2d* start_ptr=new Node2d(start);
-    _tree_nodes.push_back(start_ptr);
+    add_node(start_ptr);
     int cur_iter=0;
     while(cur_iter < _max_iter && !_got_path){
         Point2d random_point=generate_random_point();
         Node2d* nearest_node = get_nearest(random_point);
         Node2d* new_node = expand_node(nearest_node,&random_point);
         if(is_collision_free(nearest_node,new_node)){
-            _tree_nodes.push_back(new_node);
+            //_tree_nodes.push_back(new_node);
+            add_node(new_node);
             if(new_node->get_position() == _goal){
                 _got_path=true;
             }
@@ -62,7 +70,11 @@ void RRT::clear_tree() {
         delete tree_node;
         tree_node= nullptr;
     }
+    //for(auto node : kdtree_nodes.pts){
+    //   node = nullptr;
+    //}
     _tree_nodes.clear();
+    kdtree_nodes.pts.clear();
     _path.clear();
 
 }
@@ -79,6 +91,7 @@ Node2d* RRT::expand_node(Node2d *nearest_node, Point2d *random_point) {
 }
 
 Node2d* RRT::get_nearest(Point2d point) {
+    /*
     double min_dis=std::numeric_limits<double>::max();
     Node2d *nearest_node= nullptr;
     for(auto tree_node:_tree_nodes){
@@ -89,6 +102,17 @@ Node2d* RRT::get_nearest(Point2d point) {
         }
     }
     return nearest_node;
+     */
+    double query_pt[2]={point.get_x(),point.get_y()};
+    const size_t num_results = 1;
+    size_t ret_index;
+    double out_dist_sqr;
+    nanoflann::KNNResultSet<double> resultSet(num_results);
+    resultSet.init(&ret_index, &out_dist_sqr );
+    kdtree.findNeighbors(resultSet, query_pt, nanoflann::SearchParams(10));
+
+    return kdtree_nodes.pts[ret_index];
+
 
 }
 
